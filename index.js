@@ -13,7 +13,9 @@ function main (argv) {
   if (argv[2] === '--install') {
     return configureGit()
   } else if (argv.length < 6) {
-    console.error('ERROR: merge file arguments required. Were you looking for --install?')
+    console.error(
+      'ERROR: merge file arguments required. Were you looking for --install?'
+    )
     process.exit(1)
   } else {
     return mergeFiles.apply(null, argv.slice(2))
@@ -21,23 +23,32 @@ function main (argv) {
 }
 
 function configureGit () {
-  cp.execSync(`git config merge."npm-merge-driver".name "automatically merge npm lockfiles"`)
-  cp.execSync(`git config merge."npm-merge-driver".driver "npx npm-merge-driver %A %O %B %P"`)
-  const gitDir = cp.execSync(`git rev-parse --git-dir`, {
-    encoding: 'utf8'
-  }).trim()
-  fs.appendFileSync(path.join(gitDir, 'info', 'attributes'), [
-    '',
-    'npm-shrinkwrap.json merge=npm-merge-driver',
-    'package-lock.json merge=npm-merge-driver'
-  ].join('\n'))
+  cp.execSync(
+    `git config merge."npm-merge-driver".name "automatically merge npm lockfiles"`
+  )
+  cp.execSync(
+    `git config merge."npm-merge-driver".driver "npx npm-merge-driver %A %O %B %P"`
+  )
+  const gitDir = cp
+    .execSync(`git rev-parse --git-dir`, {
+      encoding: 'utf8'
+    })
+    .trim()
+  fs.appendFileSync(
+    path.join(gitDir, 'info', 'attributes'),
+    [
+      '',
+      'npm-shrinkwrap.json merge=npm-merge-driver',
+      'package-lock.json merge=npm-merge-driver'
+    ].join('\n')
+  )
 }
 
 function mergeFiles (current, old, theirs, file) {
-  const ret = cp.spawnSync('git', [
-    'merge-file', '-p', current, old, theirs
-  ], {stdio: [0, 'pipe', 2]})
+  const ret = cp.spawnSync('git', ['merge-file', '-p', current, old, theirs], {
+    stdio: [0, 'pipe', 2]
+  })
   fs.writeFileSync(file, ret.stdout)
-  cp.spawnSync('npm', ['install', '--package-lock-only'], {stdio: 'inherit'})
+  cp.spawnSync('npm', ['install', '--package-lock-only'], { stdio: 'inherit' })
   fs.writeFileSync(current, fs.readFileSync(file))
 }

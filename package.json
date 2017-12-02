@@ -10,6 +10,7 @@
   ],
   "man": "./npm-merge-driver.1",
   "scripts": {
+    "precommit": "lint-staged",
     "docs": "tail -n +2 README.md | marked-man --manual 'User Commands' --version \"$npm_package_name@$npm_package_version\" > npm-merge-driver.1",
     "prerelease": "npm t",
     "postrelease": "npm publish && git push --follow-tags",
@@ -37,7 +38,11 @@
     "twitter": "maybekatz"
   },
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "husky": "^0.14.3",
+    "lint-staged": "^6.0.0",
+    "prettier-standard": "^7.0.3"
+  },
   "devDependencies": {
     "marked-man": "^0.2.1",
     "nyc": "^11.3.0",
@@ -52,6 +57,14 @@
       "exclude": [
         "node_modules/**",
         "test/**"
+      ]
+    }
+  },
+  "lint-staged": {
+    "linters": {
+      "./*.js": [
+        "prettier-standard",
+        "git add"
       ]
     }
   }
