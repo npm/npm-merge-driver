@@ -34,8 +34,10 @@ function configureGit () {
 }
 
 function mergeFiles (current, old, theirs, file) {
-  const out = cp.execSync(`git merge-file -p ${current} ${old} ${theirs}`)
-  fs.writeFileSync(file, out)
-  cp.execSync('npm install --package-lock-only')
+  const ret = cp.spawnSync('git', [
+    'merge-file', '-p', current, old, theirs
+  ], {stdio: [0, 'pipe', 2]})
+  fs.writeFileSync(file, ret.stdout)
+  cp.spawnSync('npm', ['install', '--package-lock-only'], {stdio: 'inherit'})
   fs.writeFileSync(current, fs.readFileSync(file))
 }
