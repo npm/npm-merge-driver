@@ -1,0 +1,54 @@
+{
+  "name": "npm-merge-driver",
+  "version": "0.0.0",
+  "description": "git merge driver for dealing with npm-related files",
+  "bin": "index.js",
+  "main": "index.js",
+  "files": [
+    "*.js"
+  ],
+  "scripts": {
+    "prerelease": "npm t",
+    "postrelease": "npm publish && git push --follow-tags",
+    "pretest": "standard",
+    "release": "standard-version -s",
+    "test": "tap -J --coverage test/*.js",
+    "update-coc": "weallbehave -o . && git add CODE_OF_CONDUCT.md && git commit -m 'docs(coc): updated CODE_OF_CONDUCT.md'",
+    "update-contrib": "weallcontribute -o . && git add CONTRIBUTING.md && git commit -m 'docs(contributing): updated CONTRIBUTING.md'"
+  },
+  "repository": "https://github.com/npm/npm-merge-driver",
+  "keywords": [
+    "npm",
+    "lockfiles",
+    "package-lock.json",
+    "npm-shrinkwrap.json",
+    "shrinkwrap",
+    "pkglock",
+    "git",
+    "merge",
+    "driver"
+  ],
+  "author": {
+    "name": "Kat Marchán",
+    "email": "kzm@sykosomatic.org",
+    "twitter": "maybekatz"
+  },
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "nyc": "^11.3.0",
+    "standard": "^10.0.3",
+    "standard-version": "^4.1.0",
+    "tap": "^11.0.0",
+    "weallbehave": "^1.2.0",
+    "weallcontribute": "^1.0.8"
+  },
+  "config": {
+    "nyc": {
+      "exclude": [
+        "node_modules/**",
+        "test/**"
+      ]
+    }
+  }
+}
