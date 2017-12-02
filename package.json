@@ -5,9 +5,12 @@
   "bin": "index.js",
   "main": "index.js",
   "files": [
-    "*.js"
+    "*.js",
+    "npm-merge-driver.1"
   ],
+  "man": "./npm-merge-driver.1",
   "scripts": {
+    "docs": "tail -n +2 README.md | marked-man --manual 'User Commands' --version \"$npm_package_name@$npm_package_version\" > npm-merge-driver.1",
     "prerelease": "npm t",
     "postrelease": "npm publish && git push --follow-tags",
     "pretest": "standard",
@@ -36,6 +39,7 @@
   "license": "ISC",
   "dependencies": {},
   "devDependencies": {
+    "marked-man": "^0.2.1",
     "nyc": "^11.3.0",
     "standard": "^10.0.3",
     "standard-version": "^4.1.0",

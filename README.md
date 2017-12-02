@@ -11,18 +11,22 @@ This merge driver works only with `npm@>=5.7`.
 
 ### Configuring git
 
-#### Automatic (recommended)
+Some assembly is required before you can start auto-merging those lockfiles!
+
+Automatic (recommended):
 ```
 $ cd /your/project/dir
 $ npx npm-merge-driver --install
 ```
 
-#### Manual
+Manual:
 
 Add the driver to `.git/config`:
 ```
-$ git config --add merge."npm-merge-driver".name "Automatically merge npm lockfiles"
-$ git config --add merge."npm-merge-driver".driver "npx npm-merge-driver %A %O %B %P"
+$ git config merge."npm-merge-driver".name \
+    "Automatically merge npm lockfiles"
+$ git config merge."npm-merge-driver".driver \
+    "npx npm-merge-driver %A %O %B %P"
 ```
 
 Add the relevant attributes to `.gitattributes` or `.git/info/attributes`:
@@ -30,6 +34,8 @@ Add the relevant attributes to `.gitattributes` or `.git/info/attributes`:
 package-lock.json merge=npm-merge-driver
 npm-shrinkwrap.json merge=npm-merge-driver
 ```
+
+Globally: Do the manual steps, on your global or system configurations.
 
 ## AUTHOR
 
