@@ -82,6 +82,9 @@ function mergeFiles (argv) {
     }
   )
   fs.writeFileSync(argv['%P'], ret.stdout)
-  cp.execSync(argv.command, { stdio: 'inherit' })
+  cp.execSync(argv.command, {
+    stdio: 'inherit',
+    cwd: path.dirname(argv['%P'])
+  })
   fs.writeFileSync(argv['%A'], fs.readFileSync(argv['%P']))
 }
