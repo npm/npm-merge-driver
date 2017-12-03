@@ -9,6 +9,11 @@
 To start using it right away:
 
 ```
+$ npx npm-merge-driver install --global
+```
+
+**Or** install it locally, per-project:
+```
 $ cd /path/to/git/repository
 $ npx npm-merge-driver install
 ```
