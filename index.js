@@ -18,7 +18,7 @@ function parseArgs () {
     {
       driver: {
         type: 'string',
-        default: 'npx npm-merge-driver merge npm %A %O %B %P',
+        default: 'npx npm-merge-driver merge %A %O %B %P',
         description:
             'string to install as the driver in the git configuration'
       },
@@ -26,15 +26,27 @@ function parseArgs () {
         type: 'string',
         default: 'npm-merge-driver',
         description:
-            'string to use as the merge driver name in your configuration'
+            'String to use as the merge driver name in your configuration.'
+      },
+      files: {
+        description: 'Filenames that will trigger this driver.',
+        type: 'array',
+        default: ['npm-shrinkwrap.json', 'package-lock.json']
       }
     },
       configureGit
     )
     .command(
-      'merge <npm-bin> <%A> <%O> <%B> <%P>',
+      'merge <%A> <%O> <%B> <%P>',
       'Check for lockfile conflicts and correct them if necessary.',
-      {},
+    {
+      command: {
+        alias: 'c',
+        description: 'Command to execute to resolve conflicts.',
+        type: 'string',
+        default: 'npm install --package-lock-only'
+      }
+    },
       mergeFiles
     )
     .version(require('./package.json').version)
@@ -57,11 +69,7 @@ function configureGit (argv) {
     .trim()
   fs.appendFileSync(
     path.join(gitDir, 'info', 'attributes'),
-    [
-      '',
-      `npm-shrinkwrap.json merge=${argv.driverName}`,
-      `package-lock.json merge=${argv.driverName}`
-    ].join('\n')
+    '\n' + argv.files.map(f => `${f} merge=${argv.driverName}`).join('\n')
   )
 }
 
@@ -74,8 +82,6 @@ function mergeFiles (argv) {
     }
   )
   fs.writeFileSync(argv['%P'], ret.stdout)
-  cp.spawnSync(argv.npmBin, ['install', '--package-lock-only'], {
-    stdio: 'inherit'
-  })
+  cp.execSync(argv.command, { stdio: 'inherit' })
   fs.writeFileSync(argv['%A'], fs.readFileSync(argv['%P']))
 }

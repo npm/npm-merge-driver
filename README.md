@@ -47,6 +47,14 @@ have specific needs.
 
 `--driver-name` - string to use as the merge driver name in your configuration
 
+`--files` - list of files that will trigger this driver
+
+#### Merge Options
+
+`npm-merge-driver merge` can also be configured:
+
+`-c, --command` - command to execute when a lockfile is conflicted
+
 #### Install as Dependency
 
 To avoid regular `npx` installs, consider installing the driver:
@@ -55,10 +63,10 @@ To avoid regular `npx` installs, consider installing the driver:
 
 #### Manual Setup (advanced):
 
-`npm-merge-driver` requires two git configurations to work:
-a git configuration to add the driver to git, which is by default your local
-`.git/config` file, and a `gitattributes` configuration, which is by default
-your local `.git/info/attributes`.
+`npm-merge-driver` requires two git configurations to work: a git configuration
+to add the driver to git, which is by default your local `.git/config` file, and
+a `gitattributes(5)` configuration, which is by default your local
+`.git/info/attributes`.
 
 If you **do not** want `npm-merge-driver` to install itself for you:
 
@@ -67,7 +75,7 @@ Add the driver to `.git/config`:
 $ git config merge."npm-merge-driver".name \
     "Automatically merge npm lockfiles"
 $ git config merge."npm-merge-driver".driver \
-    "npx npm-merge-driver merge npm %A %O %B %P"
+    "npx npm-merge-driver merge %A %O %B %P"
 ```
 
 Add the relevant attributes to `.gitattributes` or `.git/info/attributes`:
@@ -75,6 +83,22 @@ Add the relevant attributes to `.gitattributes` or `.git/info/attributes`:
 package-lock.json merge=npm-merge-driver
 npm-shrinkwrap.json merge=npm-merge-driver
 ```
+
+#### Using with other package managers
+
+`npm-merge-driver` can be used with package managers other than npm! It's a bit
+more verbose, but works just as well, assuming the package manager has a command
+that can automatically resolve merge conflicts in its lockfile:
+
+```
+$ npx npm-merge-driver install \
+    --driver-name yarn-merge-driver \
+    --driver "npx npm-merge-driver merge %A %O %B %P -c yarn"
+    --files yarn.lock
+```
+
+...and now, any time `yarn.lock` has a conflict, it will be automatically
+resolved without you having to manually run `yarn`.
 
 ## AUTHOR
 
