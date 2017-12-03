@@ -9,6 +9,9 @@
     "npm-merge-driver.1"
   ],
   "man": "./npm-merge-driver.1",
+  "engines": {
+    "npm": ">5.6.0"
+  },
   "scripts": {
     "precommit": "lint-staged",
     "docs": "tail -n +2 README.md | marked-man --manual 'User Commands' --version \"$npm_package_name@$npm_package_version\" > npm-merge-driver.1",
@@ -41,7 +44,8 @@
   "dependencies": {
     "husky": "^0.14.3",
     "lint-staged": "^6.0.0",
-    "prettier-standard": "^7.0.3"
+    "prettier-standard": "^7.0.3",
+    "yargs": "^10.0.3"
   },
   "devDependencies": {
     "marked-man": "^0.2.1",
@@ -61,11 +65,12 @@
     }
   },
   "lint-staged": {
-    "linters": {
-      "./*.js": [
-        "prettier-standard",
-        "git add"
-      ]
-    }
-  }
+    "*.js": [
+      "prettier-standard",
+      "git add"
+    ]
+  },
+  "bundleDependencies": [
+    "yargs"
+  ]
 }

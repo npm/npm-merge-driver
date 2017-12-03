@@ -4,31 +4,52 @@
 const cp = require('child_process')
 const fs = require('fs')
 const path = require('path')
+const yargs = require('yargs')
 
 if (require.main === module) {
-  main(process.argv)
+  parseArgs()
 }
 
-function main (argv) {
-  if (argv[2] === '--install') {
-    return configureGit()
-  } else if (argv.length < 6) {
-    console.error(
-      'ERROR: merge file arguments required. Were you looking for --install?'
+function parseArgs () {
+  return yargs
+    .command(
+      'install',
+      'Set up the merge driver in the current git repository.',
+    {
+      driver: {
+        type: 'string',
+        default: 'npx npm-merge-driver merge npm %A %O %B %P',
+        description:
+            'string to install as the driver in the git configuration'
+      },
+      'driver-name': {
+        type: 'string',
+        default: 'npm-merge-driver',
+        description:
+            'string to use as the merge driver name in your configuration'
+      }
+    },
+      configureGit
     )
-    process.exit(1)
-  } else {
-    return mergeFiles.apply(null, argv.slice(2))
-  }
+    .command(
+      'merge <npm-bin> <%A> <%O> <%B> <%P>',
+      'Check for lockfile conflicts and correct them if necessary.',
+      {},
+      mergeFiles
+    )
+    .version(require('./package.json').version)
+    .alias('version', 'v')
+    .help()
+    .alias('help', 'h')
+    .epilogue('For the full documentation, see npm-merge-driver(1)')
+    .demandCommand().argv
 }
 
-function configureGit () {
+function configureGit (argv) {
   cp.execSync(
-    `git config merge."npm-merge-driver".name "automatically merge npm lockfiles"`
+    `git config merge."${argv.driverName}".name "automatically merge npm lockfiles"`
   )
-  cp.execSync(
-    `git config merge."npm-merge-driver".driver "npx npm-merge-driver %A %O %B %P"`
-  )
+  cp.execSync(`git config merge."${argv.driverName}".driver "${argv.driver}"`)
   const gitDir = cp
     .execSync(`git rev-parse --git-dir`, {
       encoding: 'utf8'
@@ -38,17 +59,23 @@ function configureGit () {
     path.join(gitDir, 'info', 'attributes'),
     [
       '',
-      'npm-shrinkwrap.json merge=npm-merge-driver',
-      'package-lock.json merge=npm-merge-driver'
+      `npm-shrinkwrap.json merge=${argv.driverName}`,
+      `package-lock.json merge=${argv.driverName}`
     ].join('\n')
   )
 }
 
-function mergeFiles (current, old, theirs, file) {
-  const ret = cp.spawnSync('git', ['merge-file', '-p', current, old, theirs], {
-    stdio: [0, 'pipe', 2]
+function mergeFiles (argv) {
+  const ret = cp.spawnSync(
+    'git',
+    ['merge-file', '-p', argv['%A'], argv['%O'], argv['%B']],
+    {
+      stdio: [0, 'pipe', 2]
+    }
+  )
+  fs.writeFileSync(argv['%P'], ret.stdout)
+  cp.spawnSync(argv.npmBin, ['install', '--package-lock-only'], {
+    stdio: 'inherit'
   })
-  fs.writeFileSync(file, ret.stdout)
-  cp.spawnSync('npm', ['install', '--package-lock-only'], { stdio: 'inherit' })
-  fs.writeFileSync(current, fs.readFileSync(file))
+  fs.writeFileSync(argv['%A'], fs.readFileSync(argv['%P']))
 }
