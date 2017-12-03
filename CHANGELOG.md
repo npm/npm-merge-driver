@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.0.0"></a>
+# [2.0.0](https://github.com/npm/npm-merge-driver/compare/v1.0.2...v2.0.0) (2017-12-03)
+
+
+### Bug Fixes
+
+* **deps:** force unbump of broken rxjs version ([72dcd14](https://github.com/npm/npm-merge-driver/commit/72dcd14))
+
+
+### Features
+
+* **non-npm:** add support for running non-npm commands ([aee4e70](https://github.com/npm/npm-merge-driver/commit/aee4e70))
+
+
+### BREAKING CHANGES
+
+* **non-npm:** this removes the --npm-bin option in favor of --command
+
+
+
 <a name="1.0.2"></a>
 ## [1.0.2](https://github.com/npm/npm-merge-driver/compare/v1.0.1...v1.0.2) (2017-12-03)
 
