@@ -105,6 +105,14 @@ $ npx npm-merge-driver install \
 ...and now, any time `yarn.lock` has a conflict, it will be automatically
 resolved without you having to manually run `yarn`.
 
+#### Uninstalling
+
+To remove an installed merge driver, use `npm-merge-driver uninstall`:
+
+```
+$ npx npm-merge-driver uninstall [--global] [--driver-name=npm-merge-driver]
+```
+
 ## AUTHOR
 
 Written by [Kat Marchan](https://github.com/zkat)

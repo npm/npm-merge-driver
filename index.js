@@ -40,7 +40,25 @@ function parseArgs () {
         default: ['npm-shrinkwrap.json', 'package-lock.json']
       }
     },
-      configureGit
+      install
+    )
+    .command(
+      'uninstall',
+      'Remove a previously configured driver',
+    {
+      global: {
+        type: 'boolean',
+        default: false,
+        description: 'install to your user-level git configuration'
+      },
+      'driver-name': {
+        type: 'string',
+        default: 'npm-merge-driver',
+        description:
+            'String to use as the merge driver name in your configuration.'
+      }
+    },
+      uninstall
     )
     .command(
       'merge <%A> <%O> <%B> <%P>',
@@ -53,7 +71,7 @@ function parseArgs () {
         default: 'npm install --package-lock-only'
       }
     },
-      mergeFiles
+      merge
     )
     .version(require('./package.json').version)
     .alias('version', 'v')
@@ -63,11 +81,55 @@ function parseArgs () {
     .demandCommand().argv
 }
 
-function configureGit (argv) {
+function install (argv) {
+  const attrFile = findAttributes(argv)
+  const opts = argv.global ? '--global' : '--local'
+  cp.execSync(
+    `git config ${opts} merge."${argv.driverName}".name "automatically merge npm lockfiles"`
+  )
+  cp.execSync(
+    `git config ${opts} merge."${argv.driverName}".driver "${argv.driver}"`
+  )
+  mkdirp.sync(path.dirname(attrFile))
+  fs.appendFileSync(
+    attrFile,
+    '\n' +
+      argv.files.map(f => `${f} merge=${argv.driverName}`).join('\n') +
+      '\n'
+  )
+}
+
+function uninstall (argv) {
+  const attrFile = findAttributes(argv)
+  const opts = argv.global ? '--global' : '--local'
+  try {
+    cp.execSync(
+      `git config ${opts} --remove-section merge."${argv.driverName}"`
+    )
+  } catch (e) {
+    if (!e.message.match(/no such section/gi)) {
+      throw e
+    }
+  }
+  let currAttrs
+  try {
+    currAttrs = fs.readFileSync(attrFile, 'utf8').split('\n')
+  } catch (e) {}
+  if (currAttrs) {
+    let newAttrs = ''
+    currAttrs.forEach(attr => {
+      const match = attr.match(/ merge=(.*)$/i)
+      if (!match || match[1].trim() !== argv.driverName) {
+        newAttrs += attr + '\n'
+      }
+    })
+    fs.writeFileSync(attrFile, newAttrs)
+  }
+}
+
+function findAttributes (argv) {
   let attrFile
-  let opts = ''
   if (argv.global) {
-    opts = '--global'
     try {
       attrFile = cp
         .execSync(`git config --global core.attributesfile`)
@@ -82,7 +144,6 @@ function configureGit (argv) {
       }
     }
   } else {
-    opts = '--local'
     const gitDir = cp
       .execSync(`git rev-parse --git-dir`, {
         encoding: 'utf8'
@@ -90,20 +151,10 @@ function configureGit (argv) {
       .trim()
     attrFile = path.join(gitDir, 'info', 'attributes')
   }
-  cp.execSync(
-    `git config ${opts} merge."${argv.driverName}".name "automatically merge npm lockfiles"`
-  )
-  cp.execSync(
-    `git config ${opts} merge."${argv.driverName}".driver "${argv.driver}"`
-  )
-  mkdirp.sync(path.dirname(attrFile))
-  fs.appendFileSync(
-    attrFile,
-    '\n' + argv.files.map(f => `${f} merge=${argv.driverName}`).join('\n')
-  )
+  return attrFile
 }
 
-function mergeFiles (argv) {
+function merge (argv) {
   const ret = cp.spawnSync(
     'git',
     ['merge-file', '-p', argv['%A'], argv['%O'], argv['%B']],
