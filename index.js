@@ -111,6 +111,14 @@ function install (argv) {
       argv.files.map(f => `${f} merge=${argv.driverName}`).join('\n') +
       '\n'
   )
+  console.error(
+    'npm-merge-driver:',
+    argv.driverName,
+    'installed to `git config',
+    opts + '`',
+    'and',
+    attrFile
+  )
 }
 
 function uninstall (argv) {
@@ -169,6 +177,7 @@ function findAttributes (argv) {
 }
 
 function merge (argv) {
+  console.error('npm-merge-driver: merging', argv['%P'])
   const ret = cp.spawnSync(
     'git',
     ['merge-file', '-p', argv['%A'], argv['%O'], argv['%B']],
@@ -187,10 +196,14 @@ function merge (argv) {
       throw e
     }
     fs.writeFileSync(argv['%P'], fs.readFileSync(argv['%B']))
+    console.error(
+      'npm-merge-driver: --legacy enabled. Checking out --theirs and retrying merge'
+    )
     cp.execSync(argv.command, {
       stdio: 'inherit',
       cwd: path.dirname(argv['%P'])
     })
   }
   fs.writeFileSync(argv['%A'], fs.readFileSync(argv['%P']))
+  console.error('npm-merge-driver:', argv['%P'], 'successfully merged.')
 }
