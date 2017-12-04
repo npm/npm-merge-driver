@@ -2,8 +2,6 @@
 
 # npm-merge-driver(1) -- git merge driver for automatic merging of npm files
 
-**NOTE**: This driver **requires** `npm@5.7.0` or higher.
-
 ### Automatic Setup (recommended):
 
 To start using it right away:
@@ -54,11 +52,15 @@ have specific needs.
 
 `--files` - list of files that will trigger this driver
 
+`--no-legacy` - disables retrying legacy commands on error
+
 #### Merge Options
 
 `npm-merge-driver merge` can also be configured:
 
 `-c, --command` - command to execute when a lockfile is conflicted
+
+`--no-legacy` - disables retrying legacy commands on error
 
 #### Install as Dependency
 

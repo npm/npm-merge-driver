@@ -17,6 +17,12 @@ function parseArgs () {
       'install',
       'Set up the merge driver in the current git repository.',
     {
+      legacy: {
+        type: 'boolean',
+        default: true,
+        description:
+            'when the merge driver errors, it will retry the command after resolving the merge conflict with --theirs'
+      },
       global: {
         type: 'boolean',
         default: false,
@@ -69,6 +75,12 @@ function parseArgs () {
         description: 'Command to execute to resolve conflicts.',
         type: 'string',
         default: 'npm install --package-lock-only'
+      },
+      legacy: {
+        type: 'boolean',
+        default: true,
+        description:
+            'If <command> errors, it will be re-run after checking out the --theirs version of the file, with no granular merging.'
       }
     },
       merge
@@ -88,7 +100,9 @@ function install (argv) {
     `git config ${opts} merge."${argv.driverName}".name "automatically merge npm lockfiles"`
   )
   cp.execSync(
-    `git config ${opts} merge."${argv.driverName}".driver "${argv.driver}"`
+    `git config ${opts} merge."${argv.driverName}".driver "${argv.driver}${!argv.legacy
+      ? ' --no-legacy'
+      : ''}"`
   )
   mkdirp.sync(path.dirname(attrFile))
   fs.appendFileSync(
@@ -163,9 +177,20 @@ function merge (argv) {
     }
   )
   fs.writeFileSync(argv['%P'], ret.stdout)
-  cp.execSync(argv.command, {
-    stdio: 'inherit',
-    cwd: path.dirname(argv['%P'])
-  })
+  try {
+    cp.execSync(argv.command, {
+      stdio: 'inherit',
+      cwd: path.dirname(argv['%P'])
+    })
+  } catch (e) {
+    if (!argv.legacy) {
+      throw e
+    }
+    fs.writeFileSync(argv['%P'], fs.readFileSync(argv['%B']))
+    cp.execSync(argv.command, {
+      stdio: 'inherit',
+      cwd: path.dirname(argv['%P'])
+    })
+  }
   fs.writeFileSync(argv['%A'], fs.readFileSync(argv['%P']))
 }
