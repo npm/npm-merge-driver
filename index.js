@@ -197,8 +197,9 @@ function merge (argv) {
     }
     fs.writeFileSync(argv['%P'], fs.readFileSync(argv['%B']))
     console.error(
-      'npm-merge-driver: --legacy enabled. Checking out --theirs and retrying merge'
+      'npm-merge-driver: --legacy enabled. Checking out --theirs and retrying merge.'
     )
+    console.error('npm-merge-driver: !!!SOME CHANGES MAY BE LOST!!!')
     cp.execSync(argv.command, {
       stdio: 'inherit',
       cwd: path.dirname(argv['%P'])
