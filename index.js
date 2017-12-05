@@ -105,12 +105,23 @@ function install (argv) {
       : ''}"`
   )
   mkdirp.sync(path.dirname(attrFile))
-  fs.appendFileSync(
-    attrFile,
-    '\n' +
-      argv.files.map(f => `${f} merge=${argv.driverName}`).join('\n') +
-      '\n'
-  )
+  let attrContents = ''
+  try {
+    const RE = new RegExp(`.* merge\\s*=\\s*${argv.driverName}$`)
+    attrContents = fs
+      .readFileSync(attrFile, 'utf8')
+      .split(/\r?\n/)
+      .filter(line => !line.match(RE))
+      .join('\n')
+  } catch (e) {}
+  if (attrContents && !attrContents.match(/[\n\r]$/g)) {
+    attrContents = '\n'
+  }
+  attrContents += argv.files
+    .map(f => `${f} merge=${argv.driverName}`)
+    .join('\n')
+  attrContents += '\n'
+  fs.writeFileSync(attrFile, attrContents)
   console.error(
     'npm-merge-driver:',
     argv.driverName,
