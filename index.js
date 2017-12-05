@@ -94,7 +94,10 @@ function parseArgs () {
 }
 
 function install (argv) {
-  const attrFile = findAttributes(argv)
+  const attrFile = findAttributes(argv).replace(
+    /^\s*~\//,
+    process.env.HOME + '/'
+  )
   const opts = argv.global ? '--global' : '--local'
   cp.execSync(
     `git config ${opts} merge."${argv.driverName}".name "automatically merge npm lockfiles"`
