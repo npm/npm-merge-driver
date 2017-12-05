@@ -1,6 +1,6 @@
 [![npm](https://img.shields.io/npm/v/npm-merge-driver.svg)](https://npm.im/npm-merge-driver) [![license](https://img.shields.io/npm/l/npm-merge-driver.svg)](https://npm.im/npm-merge-driver) [![Travis](https://img.shields.io/travis/npm/npm-merge-driver.svg)](https://travis-ci.org/npm/npm-merge-driver) [![AppVeyor](https://ci.appveyor.com/api/projects/status/github/npm/npm-merge-driver?svg=true)](https://ci.appveyor.com/project/npm/npm-merge-driver) [![Coverage Status](https://coveralls.io/repos/github/npm/npm-merge-driver/badge.svg?branch=latest)](https://coveralls.io/github/npm/npm-merge-driver?branch=latest)
 
-# npm-merge-driver(1) -- git merge driver for automatic merging of npm files
+# npm-merge-driver(1) -- git merge driver for automatic merging of lockfiles
 
 ### Automatic Setup (recommended):
 

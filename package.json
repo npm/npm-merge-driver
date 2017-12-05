@@ -33,7 +33,12 @@
     "pkglock",
     "git",
     "merge",
-    "driver"
+    "driver",
+    "conflict",
+    "merge conflict",
+    "resolve conflict",
+    "automerge",
+    "autoresolve"
   ],
   "author": {
     "name": "Kat Marchán",
