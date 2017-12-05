@@ -1,6 +1,6 @@
 {
   "name": "npm-merge-driver",
-  "version": "2.3.2",
+  "version": "2.3.3",
   "description": "git merge driver for dealing with npm-related files",
   "bin": "index.js",
   "main": "index.js",
