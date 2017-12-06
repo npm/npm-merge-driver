@@ -9,9 +9,6 @@
     "npm-merge-driver.1"
   ],
   "man": "./npm-merge-driver.1",
-  "engines": {
-    "npm": ">=5.0.0"
-  },
   "scripts": {
     "precommit": "lint-staged",
     "docs": "tail -n +2 README.md | marked-man --manual 'User Commands' --version \"$npm_package_name@$npm_package_version\" > npm-merge-driver.1",
