@@ -10,7 +10,7 @@
   ],
   "man": "./npm-merge-driver.1",
   "engines": {
-    "npm": ">5.6.0"
+    "npm": ">=5.0.0"
   },
   "scripts": {
     "precommit": "lint-staged",
