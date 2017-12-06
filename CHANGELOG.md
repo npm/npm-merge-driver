@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.3.5"></a>
+## [2.3.5](https://github.com/npm/npm-merge-driver/compare/v2.3.4...v2.3.5) (2017-12-06)
+
+
+### Bug Fixes
+
+* **engines:** actually remove this altogether. causes more problems than it solves ([65a60aa](https://github.com/npm/npm-merge-driver/commit/65a60aa))
+* **engines:** Change npm engine specification to >=5. ([#1](https://github.com/npm/npm-merge-driver/issues/1)) ([cafda00](https://github.com/npm/npm-merge-driver/commit/cafda00))
+
+
+
 <a name="2.3.4"></a>
 ## [2.3.4](https://github.com/npm/npm-merge-driver/compare/v2.3.3...v2.3.4) (2017-12-05)
 
