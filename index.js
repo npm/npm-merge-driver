@@ -28,6 +28,12 @@ function parseArgs () {
         default: false,
         description: 'install to your user-level git configuration'
       },
+      shared: {
+        type: 'boolean',
+        default: false,
+        description:
+            'install as a devDependency and add as a lifecycle script, for standardizing shared projects'
+      },
       driver: {
         type: 'string',
         default: 'npx npm-merge-driver merge %A %O %B %P',
@@ -55,13 +61,19 @@ function parseArgs () {
       global: {
         type: 'boolean',
         default: false,
-        description: 'install to your user-level git configuration'
+        description: 'uninstall from your user-level git configuration'
+      },
+      shared: {
+        type: 'boolean',
+        default: false,
+        description:
+            'uninstall from devDependencies and remove lifecycle script'
       },
       'driver-name': {
         type: 'string',
         default: 'npm-merge-driver',
         description:
-            'String to use as the merge driver name in your configuration.'
+            'String used as the merge driver name in your configuration.'
       }
     },
       uninstall
@@ -133,6 +145,30 @@ function install (argv) {
     'and',
     attrFile
   )
+  if (argv.shared) {
+    const prepare = 'npm-merge-driver ' + process.argv.slice(2).join(' ')
+    const npmDir = cp
+      .execSync('npm prefix')
+      .toString('utf8')
+      .trim()
+    const pkgFile = path.join(npmDir, 'package.json')
+    const pkg = JSON.parse(fs.readFileSync(pkgFile))
+    const scripts = (pkg.scripts = pkg.scripts || {})
+    scripts.prepare = !scripts.prepare
+      ? prepare
+      : `${prepare} && ${scripts.prepare}`
+    fs.writeFileSync(pkgFile, JSON.stringify(pkg, null, 2), 'utf8')
+    cp.spawnSync('npm', ['install', '--save-dev', 'npm-merge-driver'], {
+      stdio: [0, 'pipe', 2]
+    })
+    console.error(
+      'npm-merge-driver:',
+      argv.driverName,
+      'installed as devDependency and',
+      'set `prepare` lifecycle script to',
+      scripts.prepare
+    )
+  }
 }
 
 function uninstall (argv) {
@@ -160,6 +196,34 @@ function uninstall (argv) {
       }
     })
     fs.writeFileSync(attrFile, newAttrs)
+  }
+  if (argv.shared) {
+    const npmDir = cp
+      .execSync('npm prefix')
+      .toString('utf8')
+      .trim()
+    const pkgFile = path.join(npmDir, 'package.json')
+    const pkg = JSON.parse(fs.readFileSync(pkgFile))
+    const scripts = (pkg.scripts = pkg.scripts || {})
+    if (scripts.prepare) {
+      const before = scripts.prepare.replace(/npm-merge-driver[^&]+&&/, '')
+      if (!before) {
+        delete scripts.prepare
+      } else {
+        scripts.prepare = before
+      }
+    }
+    fs.writeFileSync(pkgFile, JSON.stringify(pkg, null, 2), 'utf8')
+    cp.spawnSync('npm', ['uninstall', '--save-dev', 'npm-merge-driver'], {
+      stdio: [0, 'pipe', 2]
+    })
+    console.error(
+      'npm-merge-driver:',
+      argv.driverName,
+      'uninstalled as devDependency and',
+      'set `prepare` lifecycle script back to',
+      scripts.prepare
+    )
   }
 }
 

@@ -37,6 +37,13 @@ $ git status
 <clean>
 ```
 
+### Shared Projects
+
+You might be working on a shared project with other contributors, and you'd like them to
+automatically get this configuration too when they setup their project. Cool, you're
+nice for taking the work off their hands. Add the `--shared` argument to do that. It'll
+update your `package.json` and `package-lock.json`, so make sure to commit those files.
+
 ### Advanced
 
 The following section is only for advanced configuration of the driver if you
@@ -45,6 +52,8 @@ have specific needs.
 #### Setup Options
 
 `npm-merge-driver install` supports a couple of config options:
+
+`--shared` - adds `npm-merge-driver` as a devDependency and configures it to run on `npm install`
 
 `--driver` - string to install as the driver in the git configuration
 
@@ -91,6 +100,21 @@ package-lock.json merge=npm-merge-driver
 npm-shrinkwrap.json merge=npm-merge-driver
 ```
 
+If you're working on a module with other contributors and you want
+`npm-merge-driver` to install itself for them, `npm install` it:
+```
+$ npm install --save-dev npm-merge-driver
+```
+
+Then the command becomes available to npm scripts after installing your package.
+Then, add this lifecycle script to your `package.json` `scripts` object:
+```
+  "prepare": "npm-merge-driver install <args>"
+```
+
+Replace `<args>` with with your chosen configuration arguments.
+If there is already a `prepare` script, use ` && ` to add this command to it.
+
 #### Using with other package managers
 
 `npm-merge-driver` can be used with package managers other than npm! It's a bit
@@ -112,7 +136,7 @@ resolved without you having to manually run `yarn`.
 To remove an installed merge driver, use `npm-merge-driver uninstall`:
 
 ```
-$ npx npm-merge-driver uninstall [--global] [--driver-name=npm-merge-driver]
+$ npx npm-merge-driver uninstall [--global] [--shared] [--driver-name=npm-merge-driver]
 ```
 
 ## AUTHOR
