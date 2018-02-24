@@ -100,7 +100,7 @@ that can automatically resolve merge conflicts in its lockfile:
 ```
 $ npx npm-merge-driver install \
     --driver-name yarn-merge-driver \
-    --driver "npx npm-merge-driver merge %A %O %B %P -c yarn"
+    --driver "npx npm-merge-driver merge %A %O %B %P -c yarn" \
     --files yarn.lock
 ```
 
