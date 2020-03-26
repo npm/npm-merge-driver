@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.3.6"></a>
+## [2.3.6](https://github.com/npm/npm-merge-driver/compare/v2.3.5...v2.3.6) (2020-03-26)
+
+
+
 <a name="2.3.5"></a>
 ## [2.3.5](https://github.com/npm/npm-merge-driver/compare/v2.3.4...v2.3.5) (2017-12-06)
 

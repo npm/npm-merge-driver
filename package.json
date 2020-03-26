@@ -1,6 +1,6 @@
 {
   "name": "npm-merge-driver",
-  "version": "2.3.5",
+  "version": "2.3.6",
   "description": "git merge driver for automatically merging lockfiles",
   "bin": "index.js",
   "main": "index.js",
