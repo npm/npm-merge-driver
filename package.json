@@ -16,9 +16,7 @@
     "postrelease": "npm publish && git push --follow-tags",
     "pretest": "standard",
     "release": "standard-version -s",
-    "test": "tap -J --coverage test/*.js",
-    "update-coc": "weallbehave -o . && git add CODE_OF_CONDUCT.md && git commit -m 'docs(coc): updated CODE_OF_CONDUCT.md'",
-    "update-contrib": "weallcontribute -o . && git add CONTRIBUTING.md && git commit -m 'docs(contributing): updated CONTRIBUTING.md'"
+    "test": "tap -J --coverage test/*.js"
   },
   "repository": "https://github.com/npm/npm-merge-driver",
   "keywords": [
@@ -55,9 +53,7 @@
     "prettier-standard": "^7.0.3",
     "standard": "^10.0.3",
     "standard-version": "^4.1.0",
-    "tap": "^11.0.0",
-    "weallbehave": "^1.2.0",
-    "weallcontribute": "^1.0.8"
+    "tap": "^11.0.0"
   },
   "config": {
     "nyc": {
