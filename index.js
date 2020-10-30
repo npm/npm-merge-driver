@@ -200,6 +200,12 @@ function merge (argv) {
       maxBuffer: Infinity
     }
   )
+
+  if (ret.error) {
+    console.error('npm-merge-driver: "git merge-file" fails with:', ret.error)
+    throw ret.error
+  }
+
   fs.writeFileSync(argv['%P'], ret.stdout)
   try {
     cp.execSync(argv.command, {
