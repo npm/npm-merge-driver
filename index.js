@@ -196,7 +196,8 @@ function merge (argv) {
     'git',
     ['merge-file', '-p', argv['%A'], argv['%O'], argv['%B']],
     {
-      stdio: [0, 'pipe', 2]
+      stdio: [0, 'pipe', 2],
+      maxBuffer: Infinity
     }
   )
   fs.writeFileSync(argv['%P'], ret.stdout)
