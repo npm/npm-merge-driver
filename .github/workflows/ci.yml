@@ -78,17 +78,3 @@ jobs:
         env:
           # The environment variable name is leveraged by `tap`
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-
-      ################################################################################
-      # Run linting
-      #
-      #   ASSUMPTIONS:
-      #     - There is a script called "lint" in the package.json
-      #
-      #   We run linting AFTER we run testing and coverage checks, because if a step
-      #   fails in an GitHub Action, all other steps are not run. We don't want to
-      #   fail to run tests or coverage because of linting. It should be the lowest
-      #   priority of all the steps.
-      ################################################################################
-      - name: Run linter
-        run: npm run lint
